@@ -219,7 +219,7 @@ public static class ConsoleRenderer
     // ── Mensagens coloridas ───────────────────────────────────────────────────
 
     public static void Success(string msg) =>
-        Colored(ConsoleColor.Green, () => Console.WriteLine($"  ✓ {msg}"));
+        Colored(ConsoleColor.Green, () => Console.WriteLine($"  \\*/ {msg}"));
 
     public static void Error(string msg) =>
         Colored(ConsoleColor.Red,   () => Console.WriteLine($"  X {msg}"));
