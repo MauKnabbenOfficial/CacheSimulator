@@ -18,8 +18,8 @@ while (true)
     ConsoleRenderer.PrintMenu("MENU PRINCIPAL", [
         ("1", "Modo Manual    — configurar parâmetros e simular"),
         ("2", "Modo Análise   — análises automáticas do TDE 2"),
-        ("3", $"Trocar arquivo        (atual: {Path.GetFileName(cacheFile)})"),
-        ("4", $"Pasta de resultados   (atual: {resultsDir})"),
+        ("3", $"Trocar arquivo\n        (atual: {Path.GetFileName(cacheFile)})\n"),
+        ("4", $"Pasta de resultados\n        (atual: {resultsDir})\n"),
         ("0", "Sair")
     ]);
 
@@ -45,26 +45,72 @@ string SelecionarArquivo()
 {
     ConsoleRenderer.PrintSectionHeader("ARQUIVO DE ENTRADA");
 
-    while (true)
+    Console.WriteLine("  O arquivo de entrada contém a sequência de acessos à memória que");
+    Console.WriteLine("  será simulada. Cada linha deve seguir o formato:");
+    Console.WriteLine();
+    Console.WriteLine("      <tipo> <endereço_hex>");
+    Console.WriteLine();
+    Console.WriteLine("  onde <tipo> é 'R' (leitura) ou 'W' (escrita) e <endereço_hex> é");
+    Console.WriteLine("  um endereço de 32 bits em hexadecimal (ex: R 0x1A2B3C4D).");
+    Console.WriteLine("  Linhas em branco e comentários iniciados com '#' são ignorados.");
+    Console.WriteLine();
+
+    string defaultDir = Path.Combine(AppContext.BaseDirectory, "ArquivosSimulacao");
+    string testeFile  = Path.Combine(defaultDir, "teste_cache.txt");
+    string oficialFile = Path.Combine(defaultDir, "oficial_cache.txt");
+
+    ConsoleRenderer.PrintMenu("ESCOLHA O ARQUIVO", [
+        ("1", $"Teste   (padrão)\n        Path: {testeFile}\n"),
+        ("2", $"Oficial (padrão)\n        Path: {oficialFile}\n"),
+        ("3", "Informar caminho manualmente")
+    ]);
+
+    string escolha = Console.ReadLine()?.Trim() ?? "1";
+
+    string path = escolha switch
     {
-        string path = ConsoleRenderer.ReadInput("Caminho do arquivo .cache", "teste.cache");
+        "2" => oficialFile,
+        "3" => null!,
+        _   => testeFile
+    };
 
-        if (!File.Exists(path))
+    if (escolha == "3")
+    {
+        while (true)
         {
-            ConsoleRenderer.Error($"Arquivo não encontrado: {path}");
-            continue;
-        }
+            path = ConsoleRenderer.ReadInput("Caminho do arquivo");
 
-        int count = AddressFileReader.CountLines(path);
-        if (count == 0)
-        {
-            ConsoleRenderer.Error("Arquivo vazio ou sem entradas válidas.");
-            continue;
+            if (!File.Exists(path))
+            {
+                ConsoleRenderer.Error($"Arquivo não encontrado: {path}");
+                continue;
+            }
+            break;
         }
-
-        ConsoleRenderer.Success($"{Path.GetFileName(path)} carregado  ({count:N0} entradas)");
-        return path;
     }
+    else if (!File.Exists(path))
+    {
+        ConsoleRenderer.Error($"Arquivo padrão não encontrado: {path}");
+        ConsoleRenderer.Info("Verifique se o build foi executado com 'dotnet build'.");
+        ConsoleRenderer.Info("Informe o caminho manualmente:");
+
+        while (true)
+        {
+            path = ConsoleRenderer.ReadInput("Caminho do arquivo");
+            if (File.Exists(path)) break;
+            ConsoleRenderer.Error($"Arquivo não encontrado: {path}");
+        }
+    }
+
+    int count = AddressFileReader.CountLines(path);
+    if (count == 0)
+    {
+        ConsoleRenderer.Error("Arquivo vazio ou sem entradas válidas.");
+        return SelecionarArquivo();
+    }
+
+    ConsoleRenderer.Success($"{Path.GetFileName(path)} carregado  ({count:N0} entradas)");
+    return path;
 }
 
 // ═════════════════════════════════════════════════════════════════════════════

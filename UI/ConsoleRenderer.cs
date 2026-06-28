@@ -222,10 +222,10 @@ public static class ConsoleRenderer
         Colored(ConsoleColor.Green, () => Console.WriteLine($"  ✓ {msg}"));
 
     public static void Error(string msg) =>
-        Colored(ConsoleColor.Red,   () => Console.WriteLine($"  ✗ {msg}"));
+        Colored(ConsoleColor.Red,   () => Console.WriteLine($"  X {msg}"));
 
     public static void Info(string msg) =>
-        Colored(ConsoleColor.Cyan,  () => Console.WriteLine($"  → {msg}"));
+        Colored(ConsoleColor.Cyan,  () => Console.WriteLine($"  -> {msg}"));
 
     public static void Colored(ConsoleColor color, Action action)
     {

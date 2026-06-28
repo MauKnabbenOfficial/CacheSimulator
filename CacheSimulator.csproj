@@ -7,4 +7,11 @@
     <RootNamespace>CacheSimulator</RootNamespace>
     <AssemblyName>CacheSimulator</AssemblyName>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="ArquivosSimulacao\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
