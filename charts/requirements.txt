@@ -1,0 +1,7 @@
+# Dependências do gerador de gráficos (Cache Simulator — TDE 2)
+#
+# Instalação:
+#   pip install -r requirements.txt
+
+plotly>=5.22
+pandas>=2.0
